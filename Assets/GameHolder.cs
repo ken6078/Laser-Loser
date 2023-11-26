@@ -75,8 +75,9 @@ public class GameHolder : MonoBehaviour
             // 這邊是判斷是否移動棋子
             if (select && boardHolder.board[tilePosition.Item1, tilePosition.Item2].id == 'E') {
                 // 判斷是否在周圍
-                int distance = Math.Abs(tilePosition.Item1 + tilePosition.Item2 - lastSelect.Item1 - lastSelect.Item2);
-                if (distance == 1) {
+                int distanceY = Math.Abs(tilePosition.Item1 - lastSelect.Item1);
+                int distanceX = Math.Abs(tilePosition.Item2 - lastSelect.Item2);
+                if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) {
                     boardHolder.moveChess(lastSelect, tilePosition);
                     tileGenerator.initTaliesMaterial(originalMaterial);
                     boardHolder.refresh();
