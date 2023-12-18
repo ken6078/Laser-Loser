@@ -5,9 +5,9 @@ using UnityEngine.PlayerLoop;
 public class BoardHolder : MonoBehaviour
 {
     GameObject laserB;
-    GameObject cloneLaserB;
+    public GameObject cloneLaserB;
     GameObject laserG;
-    GameObject cloneLaserG;
+    public GameObject cloneLaserG;
     GameObject mirrorB;
     GameObject[] cloneMirrorB = new GameObject[10];
     GameObject mirrorG;
@@ -79,7 +79,7 @@ public class BoardHolder : MonoBehaviour
         }
     }
 
-    Vector3 position (int row, int col) {
+    public Vector3 position (int row, int col) {
         float beginXSet = - (columnCount - 1) / 2 * spacing;
         float beginYSet = (rowCount - 1) / 2 * spacing;
         float xPosition = beginXSet + col * spacing;

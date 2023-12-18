@@ -133,7 +133,8 @@ GameObject:
   m_Component:
   - component: {fileID: 97786594}
   - component: {fileID: 97786593}
-  m_Layer: 0
+  - component: {fileID: 97786595}
+  m_Layer: 3
   m_Name: mirrorG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,6 +208,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &97786595
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97786592}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 5.12, y: 0.44}
+    newSize: {x: 5.12, y: 5.12}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5.12, y: 0.44}
+  m_EdgeRadius: 0
 --- !u!1 &239037107
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,7 +789,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1012429832}
   - component: {fileID: 1012429831}
-  m_Layer: 0
+  - component: {fileID: 1012429833}
+  m_Layer: 3
   m_Name: mirrorB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -817,6 +864,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1012429833
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012429830}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 5.12, y: 0.44}
+    newSize: {x: 5.12, y: 5.12}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5.12, y: 0.44}
+  m_EdgeRadius: 0
 --- !u!1 &1181735337
 GameObject:
   m_ObjectHideFlags: 0
@@ -1162,7 +1254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1375836784}
   - component: {fileID: 1375836783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: laserB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1444,6 +1536,9 @@ MonoBehaviour:
   titleText: {fileID: 1670903804}
   angleSlider: {fileID: 392421991}
   okButton: {fileID: 2081513330}
+  mirrorLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &1756988603
 Transform:
   m_ObjectHideFlags: 0
@@ -1628,7 +1723,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1991857230}
   - component: {fileID: 1991857229}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: laserG
   m_TagString: Untagged
   m_Icon: {fileID: 0}

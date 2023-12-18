@@ -30,6 +30,8 @@ public class GameHolder : MonoBehaviour
     public Text titleText;
     public Slider angleSlider;
     public Button okButton;
+    public LayerMask mirrorLayer;
+    LineRenderer laser;
     TileGenerator tileGenerator;
     BoardHolder boardHolder;
     
@@ -39,6 +41,8 @@ public class GameHolder : MonoBehaviour
     bool select = false;
     GameObject selectChess;
     int round = 1;
+    int laserMaxReflex = 10000;
+    bool gameFinish = false;
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +50,14 @@ public class GameHolder : MonoBehaviour
         // init angleSlider
         angleSlider.onValueChanged.AddListener(onSliderValueChanged);
         angleSlider.interactable = false;
+        // init laser
+        laser = gameObject.AddComponent<LineRenderer>();
+        laser.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+        laser.positionCount = laserMaxReflex;
+        laser.startWidth = 0.02f;
+        laser.endWidth = 0.02f;
+        laser.startColor = Color.red;
+        laser.endColor = Color.red;
         // init button
         okButton.onClick.AddListener(onOkButtonClick);
         okButton.interactable = false;
@@ -65,6 +77,8 @@ public class GameHolder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameFinish)
+            return;
         // 在每一幀檢測是否有點擊
         if (Input.GetMouseButtonDown(0)) // 左鍵點擊
         {
@@ -102,8 +116,7 @@ public class GameHolder : MonoBehaviour
                     // 移動棋子
                     boardHolder.moveChess(lastSelect, tilePosition);
                     // 更改玩家回合
-                    nextRound();
-                    titleText.text = $"Player {round} Round";
+                    StartCoroutine(nextRound());
                 }
                 return;
             }
@@ -201,20 +214,90 @@ public class GameHolder : MonoBehaviour
         else
             boardHolder.board[chessPosition.Item1, chessPosition.Item2].angle = selectChess.transform.localEulerAngles.z;
         // 變更回合
-        nextRound();
+        StartCoroutine(nextRound());
     }
     
-    void nextRound() {
+    IEnumerator nextRound() {
+        // 更新頁面
+        boardHolder.refresh();
+        // 在下一幀執行剩下內容 (等物件更新)
+        yield return new WaitForSeconds(0.05f);
+        // 射雷射
+        float initialAngle;
+        Vector3 origin;
+        Vector3 direction;
+        if (round == 1) {
+            initialAngle = boardHolder.board[0, 0].angle;
+            direction = Quaternion.Euler(0, 0, initialAngle) * Vector3.right;
+            origin = boardHolder.position(0, 0) + direction*0.37f;
+        }
+        else{
+            initialAngle = boardHolder.board[8, 6].angle;
+            direction = Quaternion.Euler(0, 0, initialAngle) * Vector3.right;
+            origin = boardHolder.position(8, 6) + direction*0.37f;
+        }
+
+        // 从特定点以特定角度发射光线
+        Ray2D ray = new Ray2D(origin, direction);
+
+        // 发射光线并进行反射
+        ReflectRay(ray);
+        if (gameFinish)
+            yield break;
+
         select = false;
         angleSlider.interactable = false;
         okButton.interactable = false;
         // 重製所有棋格的材質
         tileGenerator.initTaliesMaterial(originalMaterial);
-        // 更新頁面
-        boardHolder.refresh();
         if (round == 1)
             round = 2;
         else
             round = 1;
+        titleText.text = $"Player {round} Round";
+    }
+
+    void ReflectRay(Ray2D ray, int times = 0)
+    {
+        if (times >= laserMaxReflex) return;
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, mirrorLayer);
+
+        if (hit.collider != null)
+        {
+            // 在这里处理光线碰到镜子的情况
+            Vector2 reflectionDirection = Vector2.Reflect(ray.direction, hit.normal);
+            // 畫線
+            Debug.DrawRay(ray.origin, ray.direction*hit.distance, Color.red, 10f);
+            laser.SetPosition(times, ray.origin);
+            for (int i = times+1; i < laserMaxReflex; i++)
+                laser.SetPosition(i, hit.point);
+            // 處理碰到雷射光源&勝利
+            if (round == 1 && hit.collider.gameObject.Equals(boardHolder.cloneLaserG)) {
+                titleText.text = "Player 1 WIN!";
+                gameFinish = true;
+                return;
+            }
+            if (round == 2 && hit.collider.gameObject.Equals(boardHolder.cloneLaserB)) {
+                titleText.text = "Player 2 WIN!";
+                gameFinish = true;
+                return;
+            }
+            if (hit.collider.gameObject.Equals(boardHolder.cloneLaserG) ||
+                hit.collider.gameObject.Equals(boardHolder.cloneLaserB)) {
+                    return;
+                }
+            // 继续反射, 偷跑一小段以免困在物體內部
+            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*0.0001f, reflectionDirection);
+
+            ReflectRay(reflectedRay, times+1);
+        }
+        else
+        {
+            // 在这里处理光线没有碰到镜子的情况
+            laser.SetPosition(times, ray.origin);
+            for (int i = times+1; i < laserMaxReflex; i++)
+                laser.SetPosition(i, ray.origin+ray.direction*50f);
+            Debug.DrawRay(ray.origin, ray.direction*50f, Color.green, 10f);
+        }
     }
 }
