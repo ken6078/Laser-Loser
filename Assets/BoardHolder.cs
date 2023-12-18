@@ -41,7 +41,7 @@ public class BoardHolder : MonoBehaviour
         }
         // put laser
         board[0, 0].id = 'C';
-        board[0, 0].angle = -180f;
+        board[0, 0].angle = 0f;
         board[8, 6].id = 'D';
         board[8, 6].angle = 180f;
         // random mirror
@@ -52,7 +52,7 @@ public class BoardHolder : MonoBehaviour
             if (board[row, col].id == 'E') {
                 count++;
                 board[row, col].id = count > 10 ? 'A' : 'B';
-                board[row, col].angle = UnityEngine.Random.Range(0, 360);
+                board[row, col].angle = UnityEngine.Random.Range(0, 180);
             }
         }
     }
@@ -92,6 +92,29 @@ public class BoardHolder : MonoBehaviour
         if (board[source.Item1, source.Item2].id == 'E') return;
         board[destination.Item1, destination.Item2] = board[source.Item1, source.Item2];
         board[source.Item1, source.Item2] = new Chess('E', 0f);
+    }
+
+    public GameObject returnChess(GameObject tile) {
+        if (cloneLaserB.transform.position.x == tile.transform.position.x && 
+            cloneLaserB.transform.position.y == tile.transform.position.y)
+            return cloneLaserB;
+        if (cloneLaserG.transform.position.x == tile.transform.position.x && 
+            cloneLaserG.transform.position.y == tile.transform.position.y)
+            return cloneLaserG;
+        foreach (GameObject item in cloneMirrorB)
+        {
+            if (item.transform.position.x == tile.transform.position.x && 
+            item.transform.position.y == tile.transform.position.y)
+            return item;
+        }
+        foreach (GameObject item in cloneMirrorG)
+        {
+            if (item.transform.position.x == tile.transform.position.x && 
+            item.transform.position.y == tile.transform.position.y)
+            return item;
+        }
+        
+        return new GameObject();
     }
 
     public void rotateBoard() {

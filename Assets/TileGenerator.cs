@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -37,5 +38,30 @@ public class TileGenerator : MonoBehaviour
                 cloneTiles[row, col].GetComponent<Renderer>().material = originalMaterial;
             }
         }
+    }
+
+    public Tuple<int, int> getTilePosition(GameObject tile) {
+        for (int row = 0; row < rowCount; row++)
+        {
+            for (int col = 0; col < columnCount; col++)
+            {
+                if (tile.Equals(cloneTiles[row, col]))
+                    return new Tuple<int, int>(row, col);
+            }
+        }
+        return new Tuple<int, int>(-1, -1);
+    }
+
+    public Tuple<int, int> getChessPosition(GameObject chess) {
+        for (int row = 0; row < rowCount; row++)
+        {
+            for (int col = 0; col < columnCount; col++)
+            {
+                if (chess.transform.position.x == cloneTiles[row, col].transform.position.x && 
+                    chess.transform.position.y == cloneTiles[row, col].transform.position.y)
+                return new Tuple<int, int>(row, col);
+            }
+        }
+        return new Tuple<int, int>(-1, -1);
     }
 }
