@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct Chess
 {
@@ -26,6 +27,7 @@ public class GameHolder : MonoBehaviour
     public GameObject laserG;
     public GameObject mirrorB;
     public GameObject mirrorG;
+    public Text titleText;
     TileGenerator tileGenerator;
     BoardHolder boardHolder;
     
@@ -33,6 +35,7 @@ public class GameHolder : MonoBehaviour
     int columnCount = 7; // 列數
     Tuple<int, int> lastSelect;
     bool select = false;
+    int round = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +50,7 @@ public class GameHolder : MonoBehaviour
             mirrorB, mirrorG
         );
         boardHolder.refresh();
+        titleText.text = $"Player {round} Round";
     }
 
     // Update is called once per frame
@@ -80,7 +84,15 @@ public class GameHolder : MonoBehaviour
                 if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) {
                     boardHolder.moveChess(lastSelect, tilePosition);
                     tileGenerator.initTaliesMaterial(originalMaterial);
+                    // boardHolder.rotateBoard();
                     boardHolder.refresh();
+                    select = false;
+                    // 更改玩家回合
+                    if (round == 1)
+                        round = 2;
+                    else
+                        round = 1;
+                    titleText.text = $"Player {round} Round";
                 }
                 return;
             }
@@ -96,6 +108,15 @@ public class GameHolder : MonoBehaviour
                 boardHolder.board[tilePosition.Item1, tilePosition.Item2].id == 'D') {
                     return;
                 }
+            // 如果不是正確的玩家就跳過
+            if (round == 1 && boardHolder.board[tilePosition.Item1, tilePosition.Item2].id == 'B') {
+                select = false;
+                return;
+            }
+            if (round == 2 && boardHolder.board[tilePosition.Item1, tilePosition.Item2].id == 'A') {
+                select = false;
+                return;
+            }
             // 周圍能走的棋格變成黃色
             Material enableMaterial = new Material(Shader.Find("Standard"));
             enableMaterial.color = Color.yellow;

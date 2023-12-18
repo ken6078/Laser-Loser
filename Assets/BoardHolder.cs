@@ -93,4 +93,20 @@ public class BoardHolder : MonoBehaviour
         board[destination.Item1, destination.Item2] = board[source.Item1, source.Item2];
         board[source.Item1, source.Item2] = new Chess('E', 0f);
     }
+
+    public void rotateBoard() {
+        for (int row = 0; row < rowCount/2; row++) {
+            for (int col = 0; col < columnCount; col++) {
+                swapChess((row, col), (rowCount-row-1, columnCount-col-1));
+            }
+        }
+        if (rowCount%2 == 1) {
+            for (int col = 0; col < columnCount/2; col++)
+                swapChess((rowCount/2, col), (rowCount/2, columnCount-col-1));
+        }
+    }
+
+    public void swapChess((int, int) chess1, (int, int) chess2) {
+        (board[chess1.Item1, chess1.Item2], board[chess2.Item1, chess2.Item2]) = (board[chess2.Item1, chess2.Item2], board[chess1.Item1, chess1.Item2]);
+    }
 }
