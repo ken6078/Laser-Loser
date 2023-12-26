@@ -31,6 +31,7 @@ public class GameHolder : MonoBehaviour
     public Slider angleSlider;
     public Button okButton;
     public LayerMask mirrorLayer;
+    public Canvas gameCanvas;
     LineRenderer laser;
     TileGenerator tileGenerator;
     BoardHolder boardHolder;
@@ -54,19 +55,20 @@ public class GameHolder : MonoBehaviour
         laser = gameObject.AddComponent<LineRenderer>();
         laser.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
         laser.positionCount = laserMaxReflex;
-        laser.startWidth = 0.02f;
-        laser.endWidth = 0.02f;
+        laser.startWidth = 3f;
+        laser.endWidth = 3f;
         laser.startColor = Color.red;
         laser.endColor = Color.red;
         // init button
         okButton.onClick.AddListener(onOkButtonClick);
         okButton.interactable = false;
         // init tile
-        tileGenerator = new TileGenerator(tile);
+        tileGenerator = new TileGenerator(tile, gameCanvas);
         tileGenerator.generateObjects();
         originalMaterial = tile.GetComponent<Renderer>().material;
         // init game object
         boardHolder = new BoardHolder(
+            gameCanvas,
             laserB, laserG, 
             mirrorB, mirrorG
         );
@@ -287,7 +289,7 @@ public class GameHolder : MonoBehaviour
                     return;
                 }
             // 继续反射, 偷跑一小段以免困在物體內部
-            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*0.0001f, reflectionDirection);
+            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*0.1f, reflectionDirection);
 
             ReflectRay(reflectedRay, times+1);
         }

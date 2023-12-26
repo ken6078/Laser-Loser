@@ -14,10 +14,11 @@ public class BoardHolder : MonoBehaviour
     GameObject[] cloneMirrorG = new GameObject[10];
     int rowCount = 9;    // 行數
     int columnCount = 7; // 列數
-    float spacing = 0.75f;  // 物體間的間距
+    float spacing = 100f;  // 物體間的間距
     public Chess[,] board = new Chess[9, 7];
 
     public BoardHolder(
+        Canvas canvas,
         GameObject laserB, GameObject laserG, 
         GameObject mirrorB, GameObject mirrorG
     ) {
@@ -26,11 +27,11 @@ public class BoardHolder : MonoBehaviour
         this.mirrorB = mirrorB;
         this.mirrorG = mirrorG;
         // init gameObject
-        cloneLaserB = Instantiate(laserB);
-        cloneLaserG = Instantiate(laserG);
+        cloneLaserB = Instantiate(laserB, canvas.transform);
+        cloneLaserG = Instantiate(laserG, canvas.transform);
         for (int i = 0; i < 10; i++) {
-            cloneMirrorB[i] = Instantiate(mirrorB);
-            cloneMirrorG[i] = Instantiate(mirrorG);
+            cloneMirrorB[i] = Instantiate(mirrorB, canvas.transform);
+            cloneMirrorG[i] = Instantiate(mirrorG, canvas.transform);
         }
 
         // init board
@@ -63,16 +64,16 @@ public class BoardHolder : MonoBehaviour
         for (int row = 0; row < rowCount; row++) {
             for (int col = 0; col < columnCount; col++) {
                 if (board[row, col].id == 'A') {
-                    cloneMirrorB[BCount].transform.position = position(row, col);
+                    cloneMirrorB[BCount].transform.localPosition = position(row, col);
                     cloneMirrorB[BCount++].transform.rotation = Quaternion.Euler(0f, 0f, board[row, col].angle);
                 } else if (board[row, col].id == 'B') {
-                    cloneMirrorG[GCount].transform.position = position(row, col);
+                    cloneMirrorG[GCount].transform.localPosition = position(row, col);
                     cloneMirrorG[GCount++].transform.rotation = Quaternion.Euler(0f, 0f, board[row, col].angle);
                 } else if (board[row, col].id == 'C') {
-                    cloneLaserB.transform.position = position(row, col);
+                    cloneLaserB.transform.localPosition = position(row, col);
                     cloneLaserB.transform.rotation = Quaternion.Euler(0f, 0f, board[row, col].angle-45);
                 } else if (board[row, col].id == 'D') {
-                    cloneLaserG.transform.position = position(row, col);
+                    cloneLaserG.transform.localPosition = position(row, col);
                     cloneLaserG.transform.rotation = Quaternion.Euler(0f, 0f, board[row, col].angle-45);
                 }
             }
@@ -95,22 +96,23 @@ public class BoardHolder : MonoBehaviour
     }
 
     public GameObject returnChess(GameObject tile) {
-        if (cloneLaserB.transform.position.x == tile.transform.position.x && 
-            cloneLaserB.transform.position.y == tile.transform.position.y)
+        if (cloneLaserB.transform.localPosition.x == tile.transform.localPosition.x && 
+            cloneLaserB.transform.localPosition.y == tile.transform.localPosition.y)
             return cloneLaserB;
-        if (cloneLaserG.transform.position.x == tile.transform.position.x && 
-            cloneLaserG.transform.position.y == tile.transform.position.y)
+        if (cloneLaserG.transform.localPosition.x == tile.transform.localPosition.x && 
+            cloneLaserG.transform.localPosition.y == tile.transform.localPosition.y)
             return cloneLaserG;
         foreach (GameObject item in cloneMirrorB)
         {
-            if (item.transform.position.x == tile.transform.position.x && 
-            item.transform.position.y == tile.transform.position.y)
+            Debug.Log(item.transform.localPosition.x);
+            if (item.transform.localPosition.x == tile.transform.localPosition.x && 
+            item.transform.localPosition.y == tile.transform.localPosition.y)
             return item;
         }
         foreach (GameObject item in cloneMirrorG)
         {
-            if (item.transform.position.x == tile.transform.position.x && 
-            item.transform.position.y == tile.transform.position.y)
+            if (item.transform.localPosition.x == tile.transform.localPosition.x && 
+            item.transform.localPosition.y == tile.transform.localPosition.y)
             return item;
         }
         
