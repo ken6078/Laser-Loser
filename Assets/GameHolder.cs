@@ -32,7 +32,7 @@ public class GameHolder : MonoBehaviour
     public Button okButton;
     public LayerMask mirrorLayer;
     public Canvas gameCanvas;
-    LineRenderer laser;
+    public LineRenderer laser;
     TileGenerator tileGenerator;
     BoardHolder boardHolder;
     
@@ -42,7 +42,7 @@ public class GameHolder : MonoBehaviour
     bool select = false;
     GameObject selectChess;
     int round = 1;
-    int laserMaxReflex = 10000;
+    int laserMaxReflex = 100;
     bool gameFinish = false;
 
     // Start is called before the first frame update
@@ -52,11 +52,11 @@ public class GameHolder : MonoBehaviour
         angleSlider.onValueChanged.AddListener(onSliderValueChanged);
         angleSlider.interactable = false;
         // init laser
-        laser = gameObject.AddComponent<LineRenderer>();
+        // laser = gameObject.AddComponent<LineRenderer>();
         laser.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
         laser.positionCount = laserMaxReflex;
-        laser.startWidth = 3f;
-        laser.endWidth = 3f;
+        laser.startWidth = 0.01f;
+        laser.endWidth = 0.01f;
         laser.startColor = Color.red;
         laser.endColor = Color.red;
         // init button
@@ -231,7 +231,8 @@ public class GameHolder : MonoBehaviour
         if (round == 1) {
             initialAngle = boardHolder.board[0, 0].angle;
             direction = Quaternion.Euler(0, 0, initialAngle) * Vector3.right;
-            origin = boardHolder.position(0, 0) + direction*0.37f;
+            origin = boardHolder.cloneLaserB.transform.localPosition + direction * 42f;
+            print(origin);
         }
         else{
             initialAngle = boardHolder.board[8, 6].angle;
@@ -266,6 +267,7 @@ public class GameHolder : MonoBehaviour
 
         if (hit.collider != null)
         {
+            Debug.Log($"{times} Hit");
             // 在这里处理光线碰到镜子的情况
             Vector2 reflectionDirection = Vector2.Reflect(ray.direction, hit.normal);
             // 畫線
@@ -289,16 +291,17 @@ public class GameHolder : MonoBehaviour
                     return;
                 }
             // 继续反射, 偷跑一小段以免困在物體內部
-            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*0.1f, reflectionDirection);
+            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*1f, reflectionDirection);
 
             ReflectRay(reflectedRay, times+1);
         }
         else
         {
+            Debug.Log($"{times} Not Hit");
             // 在这里处理光线没有碰到镜子的情况
             laser.SetPosition(times, ray.origin);
             for (int i = times+1; i < laserMaxReflex; i++)
-                laser.SetPosition(i, ray.origin+ray.direction*50f);
+                laser.SetPosition(i, ray.origin+ray.direction*5000f);
             Debug.DrawRay(ray.origin, ray.direction*50f, Color.green, 10f);
         }
     }
