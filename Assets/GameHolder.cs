@@ -42,7 +42,7 @@ public class GameHolder : MonoBehaviour
     bool select = false;
     GameObject selectChess;
     int round = 1;
-    int laserMaxReflex = 100;
+    int laserMaxReflex = 10000;
     bool gameFinish = false;
 
     // Start is called before the first frame update
@@ -231,13 +231,12 @@ public class GameHolder : MonoBehaviour
         if (round == 1) {
             initialAngle = boardHolder.board[0, 0].angle;
             direction = Quaternion.Euler(0, 0, initialAngle) * Vector3.right;
-            origin = boardHolder.cloneLaserB.transform.localPosition + direction * 42f;
-            print(origin);
+            origin = boardHolder.cloneLaserB.transform.localPosition + direction * 55f;
         }
         else{
             initialAngle = boardHolder.board[8, 6].angle;
             direction = Quaternion.Euler(0, 0, initialAngle) * Vector3.right;
-            origin = boardHolder.position(8, 6) + direction*0.37f;
+            origin = boardHolder.cloneLaserG.transform.localPosition + direction * 55f;
         }
 
         // 从特定点以特定角度发射光线
@@ -263,18 +262,24 @@ public class GameHolder : MonoBehaviour
     void ReflectRay(Ray2D ray, int times = 0)
     {
         if (times >= laserMaxReflex) return;
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, mirrorLayer);
+        Vector3 worldPosition = gameCanvas.transform.TransformPoint(ray.origin);
+        RaycastHit2D hit = Physics2D.Raycast(worldPosition, ray.direction, Mathf.Infinity, mirrorLayer);
 
         if (hit.collider != null)
         {
             Debug.Log($"{times} Hit");
+            print($"ray.origin {ray.origin}");
+            print($"worldPosition {worldPosition}");
             // 在这里处理光线碰到镜子的情况
             Vector2 reflectionDirection = Vector2.Reflect(ray.direction, hit.normal);
             // 畫線
             Debug.DrawRay(ray.origin, ray.direction*hit.distance, Color.red, 10f);
             laser.SetPosition(times, ray.origin);
+            Vector2 canvasPosition = WorldToUI(gameCanvas.GetComponent<RectTransform>(), hit.point);
+            print($"hit.point {hit.point}");
+            print($"canvasPosition {canvasPosition}");
             for (int i = times+1; i < laserMaxReflex; i++)
-                laser.SetPosition(i, hit.point);
+                laser.SetPosition(i, canvasPosition);
             // 處理碰到雷射光源&勝利
             if (round == 1 && hit.collider.gameObject.Equals(boardHolder.cloneLaserG)) {
                 titleText.text = "Player 1 WIN!";
@@ -291,7 +296,8 @@ public class GameHolder : MonoBehaviour
                     return;
                 }
             // 继续反射, 偷跑一小段以免困在物體內部
-            Ray2D reflectedRay = new Ray2D(hit.point+reflectionDirection*1f, reflectionDirection);
+            Ray2D reflectedRay = new Ray2D(canvasPosition+reflectionDirection*1f, reflectionDirection);
+            
 
             ReflectRay(reflectedRay, times+1);
         }
@@ -304,5 +310,13 @@ public class GameHolder : MonoBehaviour
                 laser.SetPosition(i, ray.origin+ray.direction*5000f);
             Debug.DrawRay(ray.origin, ray.direction*50f, Color.green, 10f);
         }
+    }
+    static public Vector2 WorldToUI(RectTransform r, Vector3 pos)
+    {
+        Vector2 screenPos = Camera.main.WorldToViewportPoint(pos); //世界物件在螢幕上的座標，螢幕左下角為(0,0)，右上角為(1,1)
+        Vector2 viewPos = (screenPos - r.pivot) * 2; //世界物件在螢幕上轉換為UI的座標，UI的Pivot point預設是(0.5, 0.5)，這邊把座標原點置中，並讓一個單位從0.5改為1
+        float width = r.rect.width / 2; //UI一半的寬，因為原點在中心
+        float height = r.rect.height / 2; //UI一半的高
+        return new Vector2(viewPos.x * width, viewPos.y * height); //回傳UI座標
     }
 }
