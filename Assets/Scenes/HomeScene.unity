@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 220932405}
   - component: {fileID: 220932404}
   m_Layer: 0
-  m_Name: ChangeScene
+  m_Name: ButtonEvent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
