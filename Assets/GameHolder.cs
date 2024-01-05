@@ -82,7 +82,7 @@ public class GameHolder : MonoBehaviour
         if (gameFinish)
             return;
         // 在每一幀檢測是否有點擊
-        if (Input.GetMouseButtonDown(0)) // 左鍵點擊
+        if (Input.GetMouseButtonDown(0) || Input.touchCount > 0) // 左鍵點擊
         {
             HandleClick();
             if (select) {
@@ -97,7 +97,13 @@ public class GameHolder : MonoBehaviour
     }
     void HandleClick()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Vector3 clickPos;
+        if (Input.GetMouseButtonDown(0))
+            clickPos = Input.mousePosition;
+        else
+            clickPos = Input.GetTouch(0).position;
+
+        Ray ray = Camera.main.ScreenPointToRay(clickPos);
         RaycastHit hit;
 
         // 使用 Raycast 檢測點擊的物體
@@ -126,9 +132,9 @@ public class GameHolder : MonoBehaviour
             tileGenerator.initTaliesMaterial(originalMaterial);
             boardHolder.refresh();
             // 選重的棋格變成紅色
-            Material selectMaterial = new Material(Shader.Find("Standard"));
-            selectMaterial.color = Color.red;
             Renderer renderer = clickedObject.GetComponent<Renderer>();
+            Material selectMaterial = renderer.material;
+            selectMaterial.color = Color.red;
             renderer.material = selectMaterial;
             // 調整拉桿角度
             selectChess = boardHolder.returnChess(clickedObject);
@@ -163,32 +169,38 @@ public class GameHolder : MonoBehaviour
                 }
             
             // 周圍能走的棋格變成黃色
-            Material enableMaterial = new Material(Shader.Find("Standard"));
-            enableMaterial.color = Color.yellow;
             GameObject enableObject;
             Renderer enableRenderer;
             // 上方
             if (tilePosition.Item1 + 1 != rowCount && boardHolder.board[tilePosition.Item1 + 1, tilePosition.Item2].id == 'E') {
                 enableObject = tileGenerator.cloneTiles[tilePosition.Item1 + 1, tilePosition.Item2];
                 enableRenderer = enableObject.GetComponent<Renderer>();
+                Material enableMaterial = enableRenderer.material;
+                enableMaterial.color = Color.yellow;
                 enableRenderer.material = enableMaterial;
             }
             // 下方
             if (tilePosition.Item1 - 1 != -1 && boardHolder.board[tilePosition.Item1 - 1, tilePosition.Item2].id == 'E') {
                 enableObject = tileGenerator.cloneTiles[tilePosition.Item1 - 1, tilePosition.Item2];
                 enableRenderer = enableObject.GetComponent<Renderer>();
+                Material enableMaterial = enableRenderer.material;
+                enableMaterial.color = Color.yellow;
                 enableRenderer.material = enableMaterial;
             }
             // 右方
             if (tilePosition.Item2 + 1 != columnCount && boardHolder.board[tilePosition.Item1, tilePosition.Item2 + 1].id == 'E') {
                 enableObject = tileGenerator.cloneTiles[tilePosition.Item1, tilePosition.Item2 + 1];
                 enableRenderer = enableObject.GetComponent<Renderer>();
+                Material enableMaterial = enableRenderer.material;
+                enableMaterial.color = Color.yellow;
                 enableRenderer.material = enableMaterial;
             }
             // 左方
             if (tilePosition.Item2 - 1 != -1 && boardHolder.board[tilePosition.Item1, tilePosition.Item2 - 1].id == 'E') {
                 enableObject = tileGenerator.cloneTiles[tilePosition.Item1, tilePosition.Item2 - 1];
                 enableRenderer = enableObject.GetComponent<Renderer>();
+                Material enableMaterial = enableRenderer.material;
+                enableMaterial.color = Color.yellow;
                 enableRenderer.material = enableMaterial;
             }
             select = true;
