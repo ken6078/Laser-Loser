@@ -28,6 +28,7 @@ public class GameHolder : MonoBehaviour
     public GameObject mirrorB;
     public GameObject mirrorG;
     public Text titleText;
+    public Text timerText;
     public Slider angleSlider;
     public Button okButton;
     public LayerMask mirrorLayer;
@@ -44,6 +45,8 @@ public class GameHolder : MonoBehaviour
     int round = 1;
     int laserMaxReflex = 10000;
     bool gameFinish = false;
+    int roundTimeSecond = 30;
+    float roundTime;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +77,8 @@ public class GameHolder : MonoBehaviour
         );
         boardHolder.refresh();
         titleText.text = $"Player {round} Round";
+        roundTime = 0;
+        timerText.text = $"{roundTimeSecond} Second";
     }
 
     // Update is called once per frame
@@ -81,6 +86,14 @@ public class GameHolder : MonoBehaviour
     {
         if (gameFinish)
             return;
+        // 計時器
+        roundTime += Time.deltaTime;
+        int lastTime = roundTimeSecond - (int) roundTime;
+        timerText.text = $"{lastTime} Second";
+        if (lastTime <= 0) {
+            StartCoroutine(nextRound());
+            roundTime = 0;
+        }
         // 在每一幀檢測是否有點擊
         if (Input.GetMouseButtonDown(0) || Input.touchCount > 0) // 左鍵點擊
         {
