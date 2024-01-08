@@ -37,10 +37,10 @@ public class GameTutorialScript : MonoBehaviour
 
     void SetTileColor(GameObject tile, Color color)
     {
-        Material material = new Material(Shader.Find("Standard"));
-        material.color = color;
         Renderer renderer = tile.GetComponent<Renderer>();
-        renderer.material = material;
+        Material selectMaterial = renderer.material;
+        selectMaterial.color = color;
+        renderer.material = selectMaterial;
     }
     void onSliderValueChanged(float value)
     {
