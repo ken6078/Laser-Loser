@@ -245,6 +245,7 @@ public class GameHolder : MonoBehaviour
     }
     
     IEnumerator nextRound() {
+        roundTime = 0;
         // 更新頁面
         boardHolder.refresh();
         // 在下一幀執行剩下內容 (等物件更新)
